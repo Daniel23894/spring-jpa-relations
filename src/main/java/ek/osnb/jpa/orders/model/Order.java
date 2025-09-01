@@ -1,12 +1,22 @@
 package ek.osnb.jpa.orders.model;
 
-import java.time.LocalDate;
+import ek.osnb.jpa.common.model.BaseEntity;
+import jakarta.persistence.*;
 
-public class Order {
+import java.time.LocalDate;
+import java.util.List;
+
+@Entity
+@Table(name = "orders")
+public class Order extends BaseEntity {
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private LocalDate orderDate;
 
-    private OrderStatus status;
+    @OneToMany(mappedBy = "order")
+    private List<OrderLine> orderLines;
 
     public Order() {}
 
