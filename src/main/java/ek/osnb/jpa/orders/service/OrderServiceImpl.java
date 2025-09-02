@@ -1,9 +1,13 @@
 package ek.osnb.jpa.orders.service;
 
+import ek.osnb.jpa.orders.dto.OrderDto;
+import ek.osnb.jpa.orders.dto.OrderMapper;
+import ek.osnb.jpa.orders.dto.OrderUpdateDto;
 import ek.osnb.jpa.orders.model.Order;
 import ek.osnb.jpa.orders.model.OrderStatus;
 import ek.osnb.jpa.orders.repository.OrderLineRepository;
 import ek.osnb.jpa.orders.repository.OrderRepository;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,5 +66,18 @@ public class OrderServiceImpl implements OrderService {
         } else {
             throw new RuntimeException("Order not found with id: " + id);
         }
+    }
+
+    @Override
+    public OrderDto updateOrderStatus(Long id, OrderUpdateDto orderUpdateDto) {
+        Optional<Order> existingOrder = orderRepository.findById(id);
+        if (existingOrder.isEmpty()){
+            throw new RuntimeException("Order with id: " + id + " wasn't found.");
+        }
+        Order order = existingOrder.get();
+        order.setStatus(OrderStatus.valueOf(orderUpdateDto.status()));
+        Order updatedOrder = orderRepository.save(order);
+
+        return OrderMapper.toDto(updatedOrder);
     }
 }
